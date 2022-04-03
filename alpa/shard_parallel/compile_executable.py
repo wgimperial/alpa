@@ -13,6 +13,7 @@ from jax.lax import add_p, div_p
 from jax.tree_util import PyTreeDef
 
 from alpa.device_mesh import LogicalDeviceMesh, PhysicalDeviceMesh
+from alpa.global_env import global_config
 from alpa.mesh_executable import (NormalMeshDriverExecutable,
                                   GradAccMeshDriverExecutable)
 from alpa.pipeline_parallel.apply_grad import APPLY_GRAD_MARKER_SUFFIX
@@ -106,7 +107,7 @@ def shard_parallel_internal(
 
     # Convert jaxpr to XLA HLO
     name = f"{fun.__name__}_shard_parallel"
-    backend = xb.get_backend("gpu")
+    backend = xb.get_backend(global_config.backend)
     hlo_module = jaxpr_to_hlo_module(name, ClosedJaxpr(jaxpr, consts),
                                      donated_invars, backend)
     flop_count = xe.hlo_module_count_flop_dot_conv_only(hlo_module)
@@ -149,7 +150,7 @@ def shard_parallel_internal_gradient_accumulation(
 
     # Run auto-sharding and slice the combined HLO into two HLO: accumulate_grad
     # and apply_grad
-    backend = xb.get_backend("gpu")
+    backend = xb.get_backend(global_config.backend)
     donated_invars = donated_invars + (False,) * num_grads
     name = f"{fun.__name__}_shard_parallel"
     hlo_module = jaxpr_to_hlo_module(name, closed_jaxpr, donated_invars,
