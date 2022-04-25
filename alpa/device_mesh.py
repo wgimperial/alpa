@@ -42,8 +42,6 @@ from jax.interpreters.pxla import (ShardingSpec, _hashable_index,
 from jax.lib import xla_client
 import jax.numpy as jnp
 import numpy as np
-import cupy
-from cupy.cuda import nccl
 import ray
 
 from alpa import mesh_profiling
@@ -59,6 +57,10 @@ from alpa.util import (benchmark_func, list_gpu_info, jax_tensor_to_cupy,
                        xla_buffer_to_cupy, cupy_to_xla_buffer,
                        is_continuous_subset, infer_offset_and_n_elements,
                        jax_tensor_index, OrderedSet, update_jax_platform)
+
+if global_config.has_cuda:
+    import cupy
+    from cupy.cuda import nccl
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
