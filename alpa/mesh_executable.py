@@ -245,8 +245,10 @@ class NormalMeshDriverExecutable(MeshDriverExecutable):
         self.auto_sharding_objective = strategy_config.auto_sharding_objective
 
         # Read sharding specs
+        # FIXME(yonghao): this line is dirty
+        post_spmd, hlo_module = hlo_module
         self.input_sharding_specs, self.output_sharding_specs = (
-            get_input_output_sharding_specs(hlo_module, avals, out_avals,
+            get_input_output_sharding_specs(post_spmd, avals, out_avals,
                                             physical_mesh.num_devices,
                                             strategy_config.logical_mesh_shape))
 
