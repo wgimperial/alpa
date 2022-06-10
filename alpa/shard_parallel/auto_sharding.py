@@ -353,10 +353,9 @@ def run_auto_sharding_pass(
                                      all_gather_threshold,
                                      as_option.all_reduce_threshold, last_s_val,
                                      last_objective)
-    hlo_module = post_spmd_module, hlo_module
 
     if return_mode == "single":
-        return hlo_module, strategy_config
+        return (post_spmd_module, hlo_module), strategy_config
     elif return_mode == "stages":
         return hlo_stage_names, hlo_stages, strategy_config
     elif return_mode == "stages_and_hook":

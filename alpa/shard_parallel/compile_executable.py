@@ -113,13 +113,13 @@ def shard_parallel_internal(
     flop_count = xe.hlo_module_count_flop_dot_conv_only(hlo_module)
 
     # Compile a XLA executable
-    hlo_module, strategy_config = run_auto_sharding_pass(
+    hlo_modules, strategy_config = run_auto_sharding_pass(
         hlo_module, avals, out_avals, donated_invars, logical_mesh_choices[0],
         "single", 1, as_option)
 
     # Compile a mesh executable
     return NormalMeshDriverExecutable(physical_mesh,
-                                      hlo_module,
+                                      hlo_modules,
                                       strategy_config,
                                       avals,
                                       out_avals,

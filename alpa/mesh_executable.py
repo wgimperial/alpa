@@ -226,7 +226,7 @@ class NormalMeshDriverExecutable(MeshDriverExecutable):
 
     def __init__(self,
                  physical_mesh: "PhysicalDeviceMesh",
-                 hlo_module: xe.HloModule,
+                 hlo_modules: Sequence[xe.HloModule],
                  strategy_config: StrategyConfig,
                  avals: Sequence[ShapedArray],
                  out_avals: Sequence[ShapedArray],
@@ -234,6 +234,7 @@ class NormalMeshDriverExecutable(MeshDriverExecutable):
                  static_argnums: Optional[Sequence[int]] = None,
                  out_tree_thunk: Optional[Callable] = None,
                  flop_count: Optional[int] = None):
+        post_spmd_module, hlo_module = hlo_modules
         self.physical_mesh = physical_mesh
         self.hlo_module = hlo_module
         self.avals = avals
@@ -245,10 +246,8 @@ class NormalMeshDriverExecutable(MeshDriverExecutable):
         self.auto_sharding_objective = strategy_config.auto_sharding_objective
 
         # Read sharding specs
-        # FIXME(yonghao): this line is dirty
-        post_spmd, hlo_module = hlo_module
         self.input_sharding_specs, self.output_sharding_specs = (
-            get_input_output_sharding_specs(post_spmd, avals, out_avals,
+            get_input_output_sharding_specs(post_spmd_module, avals, out_avals,
                                             physical_mesh.num_devices,
                                             strategy_config.logical_mesh_shape))
 
