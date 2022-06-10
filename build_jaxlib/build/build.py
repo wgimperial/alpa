@@ -217,7 +217,7 @@ def write_bazelrc(python_bin_path=None, remote_build=None,
                   cuda_toolkit_path=None, cudnn_install_path=None,
                   cuda_version=None, cudnn_version=None, rocm_toolkit_path=None,
                   cpu=None, cuda_compute_capabilities=None,
-                  rocm_amdgpu_targets=None, tf_path=None):
+                  rocm_amdgpu_targets=None, tf_path=None, enable_cuda=False):
   tf_cuda_paths = []
 
   with open("../.jax_configure.bazelrc", "w") as f:
@@ -264,10 +264,11 @@ def write_bazelrc(python_bin_path=None, remote_build=None,
       f.write("build --distinct_host_configuration=false\n")
     if tf_path:
       f.write(f'build --action_env TF_PATH="{tf_path}"\n')
-      from cupy.cuda import nccl
-      nccl_version = str(nccl.get_version())
-      nccl_version = f"{nccl_version[0]}.{int(nccl_version[1:-2])}.{int(nccl_version[-2:])}"
-      f.write(f'build --action_env TF_NCCL_VERSION="{nccl_version}"\n')
+      if enable_cuda:
+        from cupy.cuda import nccl
+        nccl_version = str(nccl.get_version())
+        nccl_version = f"{nccl_version[0]}.{int(nccl_version[1:-2])}.{int(nccl_version[-2:])}"
+        f.write(f'build --action_env TF_NCCL_VERSION="{nccl_version}"\n')
 
 
 BANNER = r"""
@@ -500,6 +501,7 @@ def main():
       cuda_compute_capabilities=args.cuda_compute_capabilities,
       rocm_amdgpu_targets=args.rocm_amdgpu_targets,
       tf_path=args.tf_path
+      enable_cuda=args.enable_cuda
   )
 
   print("\nBuilding XLA and installing it in the jaxlib source tree...")
