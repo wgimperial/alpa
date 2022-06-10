@@ -342,7 +342,7 @@ def run_auto_sharding_pass(
             "auto_sharding::force_strategy_stra_names": [],
     }):
         timers("auto-sharding").start()
-        xe.run_auto_sharding(hlo_module, compile_options)
+        post_spmd_module = xe.run_auto_sharding(hlo_module, compile_options)
         timers("auto-sharding").stop()
 
     if multiple_stages:
@@ -353,6 +353,7 @@ def run_auto_sharding_pass(
                                      all_gather_threshold,
                                      as_option.all_reduce_threshold, last_s_val,
                                      last_objective)
+    hlo_module = post_spmd_module, hlo_module
 
     if return_mode == "single":
         return hlo_module, strategy_config
