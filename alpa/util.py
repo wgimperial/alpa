@@ -34,6 +34,7 @@ import ray
 import tqdm
 
 from alpa.global_env import global_config, is_worker
+from alpa.monkey_patch import restore_random, monkey_patch_random
 
 ########################################
 ##### Alpa API Utilities
@@ -669,6 +670,8 @@ def trace_jaxpr_with_micro_batch(fun: lu.WrappedFun,
                                  batch_dim: int = 0):
     """Trace the jaxpr of the computation of a micro batch."""
     assert batch_dim == 0, "Only support batch_dim == 0"
+    # Monkey patch jax.random to fast stateful version
+    monkey_patch_random()
 
     avals = []
     batch_size = None
@@ -688,6 +691,8 @@ def trace_jaxpr_with_micro_batch(fun: lu.WrappedFun,
     with jax.disable_jit():
         jaxpr, _, consts = pe.trace_to_jaxpr_final(fun, avals)
     closed_jaxpr = ClosedJaxpr(jaxpr, consts)
+    # Restore jax.random to original stateless version
+    restore_random()
     return closed_jaxpr, batch_size
 
 
