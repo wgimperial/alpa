@@ -4,7 +4,6 @@ from dataclasses import dataclass, field
 import logging
 from typing import Sequence, Any, Dict
 
-import jax
 from jax import jit
 from jax._src.lib import xla_bridge as xb, xla_client as xc, xla_extension as xe
 from jax._src.util import partial, safe_map
@@ -29,7 +28,7 @@ from alpa.global_env import global_config
 from alpa.util import (OrderedSet, clone_jaxpr, clone_jaxpr_eqn,
                        get_compile_options, jaxpr_to_hlo_module,
                        setup_computation_alias, compile_dummy_zero_constant,
-                       get_var_mapping)
+                       get_var_mapping, get_state_p, set_state_p)
 
 # pylint: disable=redefined-builtin
 unsafe_map, map = map, safe_map  # type: ignore
@@ -578,6 +577,11 @@ def pipeline_dce(jax_pipeline_computations: Sequence[JaxPipelineComputation],
         # handle normal instructions
         local_used = OrderedSet(new_pipe_end.invars)
         for eqn in reversed(computation.eqns[1:-1]):
+            if eqn.primitive is get_state_p or eqn.primitive is set_state_p:
+                new_eqns.append(eqn)
+                local_used.update(
+                    [invar for invar in eqn.invars if isinstance(invar, Var)])
+                continue
             for outvar in eqn.outvars:
                 if not isinstance(outvar, DropVar) and outvar in local_used:
                     new_eqns.append(eqn)
