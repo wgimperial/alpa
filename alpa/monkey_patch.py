@@ -213,7 +213,7 @@ def _remat_using_while(ctx, in_nodes, name, call_jaxpr):
 
 def _remat_using_identity(ctx, in_nodes, name, call_jaxpr):
     c = ctx.builder
-    args = xla_identity(c, "remat_begin", *in_nodes)
+    args = xla_identity(c, "remat_begin", *in_nodes, op_name=name)
     args = [xops.GetTupleElement(args, i) for i in range(len(in_nodes))]
     body_ctx = ctx.replace(
         name_stack=extend_name_stack(ctx.name_stack, wrap_name(name, "remat")))
