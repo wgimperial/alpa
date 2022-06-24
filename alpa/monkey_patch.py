@@ -9,7 +9,7 @@ from jax._src import dtypes
 from jax._src.lib import xla_client as xc
 from jax._src.lib.mlir.dialects import mhlo
 from jax._src.lib.xla_bridge import get_backend as default_get_backend
-from jax.core import Primitive
+from jax.core import DropVar, Primitive, Var
 from jax.interpreters import partial_eval as pe
 from jax.interpreters import xla, mlir
 from jax.interpreters.xla import (xops, jaxpr_subcomp, extend_name_stack,
@@ -242,7 +242,10 @@ def _remat_translation_rule(ctx,
         else:
             return _remat_using_identity(ctx, in_nodes, name, call_jaxpr)
     else:
-        return jaxpr_subcomp(ctx, call_jaxpr, (), *in_nodes)
+        for inv in call_jaxpr.invars:
+            if isinstance(inv, Var) and not isinstance(inv, DropVar):
+                return jaxpr_subcomp(ctx, call_jaxpr, (), *in_nodes)
+        return _remat_using_identity(ctx, in_nodes, name, call_jaxpr)
 
 
 for dict_val in _backend_specific_translations.values():
