@@ -24,10 +24,16 @@ def create_infer_params_aval(rngkey, model, batch, no_embedding):
     if no_embedding:
         params = jax.eval_shape(model.init, rngkey, batch["x"],
                                 batch["attention_mask"])
+        params = jax.eval_shape(
+            lambda p: jax.tree_util.tree_map(
+                lambda x: jnp.asarray(x, dtype=jnp.float16), p), params)
     else:
         params = jax.eval_shape(model.init, rngkey, batch["input_ids"],
                                 batch["attention_mask"],
                                 batch["token_type_ids"], batch["position_ids"])
+        params = jax.eval_shape(
+            lambda p: jax.tree_util.tree_map(
+                lambda x: jnp.asarray(x, dtype=jnp.float16), p), params)
     return params
 
 
