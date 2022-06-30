@@ -17,7 +17,8 @@ def get_solution_case(model_name, num_micro_batches, max_global_batch_size,
                       num_auto_layers, forward_stage_layer_ids,
                       submesh_physical_shapes, submesh_logical_shapes,
                       submesh_autosharding_option_dicts):
-    return [(model_name, max_global_batch_size, *gpt_specs[model_name],
+    no_embedding = True
+    return [(model_name, no_embedding, max_global_batch_size, *gpt_specs[model_name],
              num_micro_batches, "load_solution",
              (prefer_reduce_scatter, use_remat, num_auto_layers,
               (forward_stage_layer_ids, submesh_physical_shapes,
