@@ -82,9 +82,9 @@ if __name__ == "__main__":
     #get_config([1, 2, 4, 8], [1], [1], False, True)
     #get_config([1], [1, 2, 4, 8], [1], True, True)
     #get_config([1], [1], [1, 2, 4, 8], True, True)
-    get_config([1], [1], [4], True, True)
+    get_config([1], [1], [1], False, True)
 else:
     #get_config([1, 2, 4, 8], [1], [1], False)
     #get_config([1], [1, 2, 4, 8], [1], True)
     #get_config([1], [1], [1, 2, 4, 8], True)
-    get_config([1], [1], [4], True, False)
+    get_config([1], [1], [1], False, False)
