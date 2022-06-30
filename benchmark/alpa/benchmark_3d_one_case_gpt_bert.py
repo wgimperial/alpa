@@ -23,15 +23,13 @@ from benchmark.util import compute_gpt_parameter_count, compute_gpt_tflops
 
 
 def report_pipeline_breakdown(executable, timer_names, niter):
-    overall_costs = executable.get_execution_time_costs(warmup=0,
-                                                        timer_name="overall")
+    overall_costs = executable.get_execution_time_costs(timer_name="overall")
 
     print(">>> overall: {}...".format(overall_costs))
     other_percentage = [100.0] * niter
     other = overall_costs
     for timer_name in timer_names:
-        costs = executable.get_execution_time_costs(warmup=0,
-                                                    timer_name=timer_name)
+        costs = executable.get_execution_time_costs(timer_name=timer_name)
         if len(costs) == 0:
             costs = [0.0] * niter
         percentage = [

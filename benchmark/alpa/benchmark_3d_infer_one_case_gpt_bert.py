@@ -206,7 +206,7 @@ def benchmark_gpt_bert_internal(model_type,
         executable.sync()
     e2e_latency = (time.time() - tic) / niter
 
-    overall_latency = np.mean(executable.get_execution_time_costs(warmup=1))
+    overall_latency = np.mean(executable.get_execution_time_costs()[1:])
 
     max_mem_allocated = executable.mesh_group.get_max_memory_allocated()
 
