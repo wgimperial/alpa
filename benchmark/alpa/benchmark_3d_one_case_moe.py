@@ -94,7 +94,7 @@ def benchmark_moe_internal(benchmark_case, niter, num_hosts,
                 prefer_reduce_scatter=prefer_reduce_scatter,
                 allow_mixed_mesh_shape=True,
             ))
-    elif parallel_mode == "manual":
+    elif parallel_mode == "uniform":
         (prefer_reduce_scatter, use_remat, (dp, op, pp),
          force_batch_dim_mapping) = parallel_args
         as_option = AutoShardingOption(

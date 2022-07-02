@@ -182,7 +182,7 @@ def benchmark_gpt_bert_internal(model_type,
             num_micro_batches=num_micro_batches,
             default_auto_sharding_option=AutoShardingOption(
                 prefer_reduce_scatter=prefer_reduce_scatter))
-    elif parallel_mode == "manual":
+    elif parallel_mode == "uniform":
         (prefer_reduce_scatter, use_remat, (dp, op, pp),
          force_batch_dim_mapping) = parallel_args
         as_option = AutoShardingOption(
