@@ -213,7 +213,7 @@ def _remat_using_while(ctx, in_nodes, name, call_jaxpr):
 
 def _remat_using_identity(ctx, in_nodes, name, call_jaxpr):
     c = ctx.builder
-    args = xla_identity(c, "remat_begin", *in_nodes, op_name=name)
+    args = xla_identity(c, "remat_begin", *in_nodes)
     args = [xops.GetTupleElement(args, i) for i in range(len(in_nodes))]
     body_ctx = ctx.replace(
         name_stack=extend_name_stack(ctx.name_stack, wrap_name(name, "remat")))
@@ -242,10 +242,7 @@ def _remat_translation_rule(ctx,
         else:
             return _remat_using_identity(ctx, in_nodes, name, call_jaxpr)
     else:
-        for inv in call_jaxpr.invars:
-            if isinstance(inv, Var) and not isinstance(inv.aval, AbstractUnit):
-                return jaxpr_subcomp(ctx, call_jaxpr, (), *in_nodes)
-        return _remat_using_identity(ctx, in_nodes, name, call_jaxpr)
+        return jaxpr_subcomp(ctx, call_jaxpr, (), *in_nodes)
 
 
 for dict_val in _backend_specific_translations.values():

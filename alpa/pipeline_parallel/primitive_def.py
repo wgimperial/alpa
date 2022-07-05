@@ -100,8 +100,8 @@ def xla_custom_call(c, call_name, op_type, op_name, *args):
     return output_tuple
 
 
-def xla_identity(c, op_type, *args, op_name=""):
-    return xla_custom_call(c, b"identity", op_type, op_name, *args)
+def xla_identity(c, op_type, *args):
+    return xla_custom_call(c, b"identity", op_type, *args)
 
 
 def xla_pipeline_marker(c, mark_type, name, *args):
