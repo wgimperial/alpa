@@ -125,6 +125,7 @@ def fast_bernoulli(key, p=0.5, shape=None):
 def remove_fold_in(key, data):
     return key
 
+rng_primitives = [lax.rng_uniform_p, rng_normal_p]
 
 backup_src_uniform = jax._src.random.uniform
 backup_random_uniform = jax.random.uniform
